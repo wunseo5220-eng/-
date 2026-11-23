@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>컴활 2급 필기 · 동물 마을 수업실</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&display=swap">
+<style>
+:root{
+  --sky1:#7fd0ff; --sky2:#e6f7ff; --card:#ffffff; --ink:#1f3a4d; --sub:#5b7586;
+  --carrot:#ff8a3d; --line:#d7eaf5; --bg:#f4fbff; --ground:#4cb97a;
+}
+@media (prefers-color-scheme:dark){
+  :root{--sky1:#16405f; --sky2:#10263a; --card:#183650; --ink:#eaf6ff; --sub:#a9c1d2; --line:#2b4b66; --bg:#0d2033; --ground:#2f7d55;}
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font-family:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);line-height:1.5}
+.sky{background:linear-gradient(var(--sky1),var(--sky2));padding:18px 16px 0;position:relative;overflow:hidden}
+.sky::before{content:"☀️";position:absolute;right:6%;top:14px;font-size:40px}
+.sky::after{content:"☁️      ☁️";position:absolute;left:5%;top:30px;font-size:30px;opacity:.85;white-space:pre}
+.hero{max-width:760px;margin:0 auto;text-align:center;position:relative;z-index:1;padding-top:30px}
+.sign{display:inline-block;background:var(--card);border:4px solid var(--carrot);border-radius:20px;padding:10px 26px;box-shadow:0 6px 0 var(--carrot)}
+.sign h1{font-size:clamp(26px,6vw,38px);margin:0;font-weight:400}
+.hero p{margin:14px 0 0;font-size:18px}
+.crowd{font-size:38px;letter-spacing:4px;margin-top:10px}
+.city{display:flex;align-items:flex-end;justify-content:center;gap:6px;max-width:760px;margin:10px auto 0}
+.b{flex:1;border-radius:10px 10px 0 0;position:relative;min-width:0}
+.b::after{content:"";position:absolute;inset:14px 22% 0;background:repeating-linear-gradient(#ffffff88 0 8px,transparent 8px 18px);border-radius:4px}
+.b:nth-child(1){height:70px;background:#ffb27a}.b:nth-child(2){height:110px;background:#8fd8b0}
+.b:nth-child(3){height:84px;background:#b9a6f5}.b:nth-child(4){height:130px;background:#ff9a9a}
+.b:nth-child(5){height:96px;background:#ffd36e}.b:nth-child(6){height:72px;background:#7fc6f5}
+.grass{height:16px;background:var(--ground)}
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 56px}
+.road{position:relative;padding-left:22px}
+.road::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;border-left:5px dotted #ffb27a}
+.zone{--c:var(--carrot);--t:#fff3e6;background:var(--card);border:3px solid var(--line);border-radius:24px;margin:0 0 16px;overflow:hidden;position:relative}
+.zone::before{content:"";position:absolute;left:-22px;top:26px;width:18px;height:18px;border-radius:50%;background:var(--c);border:3px solid var(--card);box-shadow:0 0 0 2px var(--c)}
+.zone[open]{border-color:var(--c)}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--t)}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible,.btn:focus-visible{outline:3px solid var(--carrot);outline-offset:2px}
+@media (prefers-color-scheme:dark){.zone{--t:#1f4260}}
+.ico{font-size:34px;width:58px;height:58px;border-radius:50%;background:var(--c);display:grid;place-items:center;flex:none;box-shadow:inset 0 -4px 0 #0002}
+.zt{flex:1;min-width:0}
+.zt b{display:block;font-size:22px;font-weight:400}
+.zt span{color:var(--sub);font-size:15px}
+.arrow{font-size:20px;color:var(--c);transition:transform .2s}
+.zone[open] .arrow{transform:rotate(90deg)}
+.list{padding:14px 16px 16px;display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border:2px dashed var(--line);border-radius:18px;padding:10px 12px}
+.per{background:var(--c);color:#fff;border-radius:999px;padding:2px 12px;font-size:15px;flex:none}
+.row .t{flex:1;min-width:150px;font-size:17px}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{font:inherit;font-size:14px;text-decoration:none;border-radius:999px;padding:5px 12px;border:2px solid var(--c);color:var(--ink);background:var(--t)}
+a.btn:hover{background:var(--c);color:#fff}
+.btn.off{border-color:var(--line);color:var(--sub);border-style:dashed;background:transparent}
+footer{text-align:center;color:var(--sub);font-size:14px;margin-top:26px}
+@media (prefers-reduced-motion:reduce){.arrow{transition:none}}
+
+.qrbtn{position:absolute;right:14px;top:14px;z-index:3;font:inherit;font-size:16px;color:var(--carrot);background:var(--card);border:3px solid var(--carrot);border-radius:14px;padding:4px 14px;cursor:pointer;box-shadow:0 3px 0 var(--carrot)}
+.qrbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+dialog{border:4px solid var(--carrot);border-radius:24px;background:var(--card);color:var(--ink);text-align:center;padding:20px 24px;font-family:inherit}
+dialog::backdrop{background:#0006}
+dialog svg{width:min(70vw,280px);height:auto;display:block;margin:10px auto;border-radius:12px;background:#fff}
+dialog p{margin:4px 0 12px;color:var(--sub)}
+.sky::before{right:84px}
+</style>
+</head>
+<body>
+<div class="sky">
+  <button class="qrbtn" type="button" onclick="document.getElementById('qr').showModal()">QR</button>
+  <header class="hero">
+    <div class="sign"><h1>컴활 2급 필기 수업실</h1></div>
+    <p>동물 마을에서 5주 동안 자격증 도전!</p>
+    <div class="crowd" aria-hidden="true">🐰🦊🐘🦒🐭</div>
+  </header>
+  <div class="city" aria-hidden="true"><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div></div>
+</div>
+<div class="grass"></div>
+<div class="wrap">
+  <main id="zones" class="road"></main>
+  <footer>자료는 매주 업데이트돼요 · 문의는 담당 선생님께</footer>
+</div>
+
+<dialog id="qr" onclick="if(event.target===this)this.close()">
+  <h2 style="margin:0;font-weight:400">🦊 QR로 입장하세요</h2>
+  <svg viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="수업실 주소 QR코드"><path fill="#000" d="M4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM7,4h1v1h-1zM8,4h1v1h-1zM9,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM14,4h1v1h-1zM15,4h1v1h-1zM21,4h1v1h-1zM22,4h1v1h-1zM24,4h1v1h-1zM26,4h1v1h-1zM27,4h1v1h-1zM28,4h1v1h-1zM29,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM4,5h1v1h-1zM10,5h1v1h-1zM13,5h1v1h-1zM16,5h1v1h-1zM20,5h1v1h-1zM21,5h1v1h-1zM23,5h1v1h-1zM26,5h1v1h-1zM32,5h1v1h-1zM4,6h1v1h-1zM6,6h1v1h-1zM7,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM13,6h1v1h-1zM15,6h1v1h-1zM17,6h1v1h-1zM19,6h1v1h-1zM20,6h1v1h-1zM21,6h1v1h-1zM23,6h1v1h-1zM24,6h1v1h-1zM26,6h1v1h-1zM28,6h1v1h-1zM29,6h1v1h-1zM30,6h1v1h-1zM32,6h1v1h-1zM4,7h1v1h-1zM6,7h1v1h-1zM7,7h1v1h-1zM8,7h1v1h-1zM10,7h1v1h-1zM12,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM18,7h1v1h-1zM19,7h1v1h-1zM20,7h1v1h-1zM22,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM29,7h1v1h-1zM30,7h1v1h-1zM32,7h1v1h-1zM4,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM15,8h1v1h-1zM16,8h1v1h-1zM17,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM32,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM12,9h1v1h-1zM13,9h1v1h-1zM14,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM19,9h1v1h-1zM21,9h1v1h-1zM23,9h1v1h-1zM24,9h1v1h-1zM26,9h1v1h-1zM32,9h1v1h-1zM4,10h1v1h-1zM5,10h1v1h-1zM6,10h1v1h-1zM7,10h1v1h-1zM8,10h1v1h-1zM9,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM28,10h1v1h-1zM29,10h1v1h-1zM30,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM12,11h1v1h-1zM14,11h1v1h-1zM15,11h1v1h-1zM18,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM23,11h1v1h-1zM24,11h1v1h-1zM4,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM12,12h1v1h-1zM13,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM18,12h1v1h-1zM19,12h1v1h-1zM20,12h1v1h-1zM21,12h1v1h-1zM24,12h1v1h-1zM25,12h1v1h-1zM26,12h1v1h-1zM27,12h1v1h-1zM28,12h1v1h-1zM29,12h1v1h-1zM32,12h1v1h-1zM4,13h1v1h-1zM11,13h1v1h-1zM14,13h1v1h-1zM16,13h1v1h-1zM21,13h1v1h-1zM22,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM28,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM32,13h1v1h-1zM5,14h1v1h-1zM6,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM10,14h1v1h-1zM11,14h1v1h-1zM12,14h1v1h-1zM13,14h1v1h-1zM17,14h1v1h-1zM18,14h1v1h-1zM19,14h1v1h-1zM21,14h1v1h-1zM24,14h1v1h-1zM26,14h1v1h-1zM28,14h1v1h-1zM32,14h1v1h-1zM6,15h1v1h-1zM8,15h1v1h-1zM15,15h1v1h-1zM16,15h1v1h-1zM17,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM21,15h1v1h-1zM22,15h1v1h-1zM24,15h1v1h-1zM26,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM31,15h1v1h-1zM32,15h1v1h-1zM4,16h1v1h-1zM6,16h1v1h-1zM10,16h1v1h-1zM12,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM15,16h1v1h-1zM17,16h1v1h-1zM21,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM25,16h1v1h-1zM27,16h1v1h-1zM31,16h1v1h-1zM4,17h1v1h-1zM5,17h1v1h-1zM6,17h1v1h-1zM8,17h1v1h-1zM9,17h1v1h-1zM14,17h1v1h-1zM16,17h1v1h-1zM17,17h1v1h-1zM18,17h1v1h-1zM20,17h1v1h-1zM26,17h1v1h-1zM27,17h1v1h-1zM28,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM32,17h1v1h-1zM5,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM13,18h1v1h-1zM20,18h1v1h-1zM21,18h1v1h-1zM22,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM28,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM32,18h1v1h-1zM6,19h1v1h-1zM7,19h1v1h-1zM8,19h1v1h-1zM9,19h1v1h-1zM11,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM18,19h1v1h-1zM21,19h1v1h-1zM24,19h1v1h-1zM28,19h1v1h-1zM31,19h1v1h-1zM32,19h1v1h-1zM4,20h1v1h-1zM7,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM12,20h1v1h-1zM13,20h1v1h-1zM15,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM18,20h1v1h-1zM19,20h1v1h-1zM21,20h1v1h-1zM24,20h1v1h-1zM31,20h1v1h-1zM4,21h1v1h-1zM5,21h1v1h-1zM9,21h1v1h-1zM11,21h1v1h-1zM12,21h1v1h-1zM14,21h1v1h-1zM16,21h1v1h-1zM21,21h1v1h-1zM22,21h1v1h-1zM24,21h1v1h-1zM25,21h1v1h-1zM26,21h1v1h-1zM27,21h1v1h-1zM28,21h1v1h-1zM29,21h1v1h-1zM31,21h1v1h-1zM32,21h1v1h-1zM10,22h1v1h-1zM11,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM17,22h1v1h-1zM18,22h1v1h-1zM19,22h1v1h-1zM21,22h1v1h-1zM26,22h1v1h-1zM30,22h1v1h-1zM32,22h1v1h-1zM8,23h1v1h-1zM11,23h1v1h-1zM12,23h1v1h-1zM14,23h1v1h-1zM17,23h1v1h-1zM21,23h1v1h-1zM26,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM4,24h1v1h-1zM5,24h1v1h-1zM6,24h1v1h-1zM7,24h1v1h-1zM8,24h1v1h-1zM10,24h1v1h-1zM12,24h1v1h-1zM14,24h1v1h-1zM16,24h1v1h-1zM17,24h1v1h-1zM19,24h1v1h-1zM21,24h1v1h-1zM23,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM32,24h1v1h-1zM12,25h1v1h-1zM14,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM19,25h1v1h-1zM20,25h1v1h-1zM24,25h1v1h-1zM28,25h1v1h-1zM32,25h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM9,26h1v1h-1zM10,26h1v1h-1zM12,26h1v1h-1zM14,26h1v1h-1zM15,26h1v1h-1zM19,26h1v1h-1zM21,26h1v1h-1zM22,26h1v1h-1zM23,26h1v1h-1zM24,26h1v1h-1zM26,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM32,26h1v1h-1zM4,27h1v1h-1zM10,27h1v1h-1zM13,27h1v1h-1zM16,27h1v1h-1zM18,27h1v1h-1zM19,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM24,27h1v1h-1zM28,27h1v1h-1zM31,27h1v1h-1zM32,27h1v1h-1zM4,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM12,28h1v1h-1zM13,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM19,28h1v1h-1zM21,28h1v1h-1zM23,28h1v1h-1zM24,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM27,28h1v1h-1zM28,28h1v1h-1zM29,28h1v1h-1zM4,29h1v1h-1zM6,29h1v1h-1zM7,29h1v1h-1zM8,29h1v1h-1zM10,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM17,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM22,29h1v1h-1zM23,29h1v1h-1zM27,29h1v1h-1zM32,29h1v1h-1zM4,30h1v1h-1zM6,30h1v1h-1zM7,30h1v1h-1zM8,30h1v1h-1zM10,30h1v1h-1zM14,30h1v1h-1zM15,30h1v1h-1zM16,30h1v1h-1zM18,30h1v1h-1zM19,30h1v1h-1zM20,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1zM31,30h1v1h-1zM32,30h1v1h-1zM4,31h1v1h-1zM10,31h1v1h-1zM14,31h1v1h-1zM16,31h1v1h-1zM17,31h1v1h-1zM18,31h1v1h-1zM21,31h1v1h-1zM23,31h1v1h-1zM24,31h1v1h-1zM25,31h1v1h-1zM26,31h1v1h-1zM28,31h1v1h-1zM29,31h1v1h-1zM31,31h1v1h-1zM32,31h1v1h-1zM4,32h1v1h-1zM5,32h1v1h-1zM6,32h1v1h-1zM7,32h1v1h-1zM8,32h1v1h-1zM9,32h1v1h-1zM10,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM14,32h1v1h-1zM16,32h1v1h-1zM17,32h1v1h-1zM19,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM26,32h1v1h-1zM27,32h1v1h-1zM28,32h1v1h-1zM31,32h1v1h-1z"/></svg>
+  <p>wunseo5220-eng.github.io</p>
+  <button class="qrbtn" style="position:static" type="button" onclick="document.getElementById('qr').close()">닫기</button>
+</dialog>
+<script>
+/* ===== 여기만 고치면 돼요 =====
+   t: 교시 제목 / files: [["버튼 이름","파일이나 링크 주소"], ...]
+   주소를 비워두면 '준비 중'으로 보여요.
+   예) ["학습지","files/week1-1.pdf"] */
+const ZONES = [
+  { icon:"🚉", name:"OT", sub:"마을 입구 · 수업 안내", c:"#ff8a3d", t:"#fff3e6", periods:[
+    { t:"수업 소개와 시험 안내", files:[["안내문",""]] }
+  ]},
+  { icon:"🌴", name:"1주차", sub:"엑셀 기초 · CPU 장치", c:"#3fae6a", t:"#e8f8ee", periods:[
+    { t:"엑셀 기초", files:[["학습지",""],["PPT",""]] },
+    { t:"CPU 장치", files:[["학습지",""],["PPT",""]] },
+    { t:"문제 풀이", files:[["문제지",""]] }
+  ]},
+  { icon:"🏜️", name:"2주차", sub:"조건부 서식 · 기본 작업 이론 · Windows 10", c:"#f0a020", t:"#fff6df", periods:[
+    { t:"조건부 서식", files:[["학습지",""],["PPT",""]] },
+    { t:"기본 작업 이론", files:[["학습지",""],["PPT",""]] },
+    { t:"Windows 10 특징", files:[["학습지",""],["PPT",""]] }
+  ]},
+  { icon:"❄️", name:"3주차", sub:"함수 · 운영체제 · 소프트웨어", c:"#3b9be0", t:"#e6f3ff", periods:[
+    { t:"함수", files:[["학습지",""],["PPT",""]] },
+    { t:"운영체제", files:[["학습지",""],["PPT",""]] },
+    { t:"소프트웨어", files:[["학습지",""],["PPT",""]] }
+  ]},
+  { icon:"🌆", name:"4주차", sub:"함수 · 인터넷 · 네트워크 · 멀티미디어", c:"#9a6bea", t:"#f1eaff", periods:[
+    { t:"함수", files:[["학습지",""],["PPT",""]] },
+    { t:"인터넷과 네트워크", files:[["학습지",""],["PPT",""]] },
+    { t:"멀티미디어", files:[["학습지",""],["PPT",""]] }
+  ]},
+  { icon:"🏁", name:"5주차", sub:"분석 작업 · 기타 작업 · 보안 · 모의고사", c:"#ee5d6c", t:"#ffeaec", periods:[
+    { t:"분석 작업과 기타 작업", files:[["학습지",""],["PPT",""]] },
+    { t:"보안", files:[["학습지",""],["PPT",""]] },
+    { t:"모의고사", files:[["문제지",""],["해설지",""]] }
+  ]}
+];
+
+const root = document.getElementById("zones");
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+ZONES.forEach((z, zi) => {
+  const d = document.createElement("details");
+  d.className = "zone";
+  d.style.setProperty("--c", z.c);
+  if (!dark) d.style.setProperty("--t", z.t);
+  if (zi === 0) d.open = true;
+  const sum = document.createElement("summary");
+  sum.innerHTML = '<div class="ico" aria-hidden="true"></div><div class="zt"><b></b><span></span></div><div class="arrow" aria-hidden="true">▶</div>';
+  sum.querySelector(".ico").textContent = z.icon;
+  sum.querySelector("b").textContent = z.name;
+  sum.querySelector("span").textContent = z.sub;
+  d.appendChild(sum);
+  const list = document.createElement("div");
+  list.className = "list";
+  z.periods.forEach((p, pi) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    const per = document.createElement("span");
+    per.className = "per";
+    per.textContent = z.periods.length === 1 ? "안내" : (pi + 1) + "교시";
+    const t = document.createElement("span");
+    t.className = "t";
+    t.textContent = p.t;
+    const btns = document.createElement("div");
+    btns.className = "btns";
+    p.files.forEach(([label, url]) => {
+      if (url) {
+        const a = document.createElement("a");
+        a.className = "btn"; a.href = url; a.target = "_blank"; a.rel = "noopener";
+        a.textContent = label;
+        btns.appendChild(a);
+      } else {
+        const s = document.createElement("span");
+        s.className = "btn off";
+        s.textContent = label + " 준비 중";
+        btns.appendChild(s);
+      }
+    });
+    row.append(per, t, btns);
+    list.appendChild(row);
+  });
+  d.appendChild(list);
+  root.appendChild(d);
+});
+</script>
+</body>
+</html>
