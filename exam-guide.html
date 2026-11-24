@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시험안내 · 컴활 2급 필기 동물 마을 수업실</title>
+<style>
+  :root { --bg:#fff7e6; --ink:#3b2f2a; --card:#ffffff; --orange:#ff8a3d; --purple:#7b5cd6; --line:#f3dfb8; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Jua","Noto Sans KR","Malgun Gothic",sans-serif; line-height:1.6; }
+  main { max-width:880px; margin:0 auto; padding:28px 16px 48px; }
+  h1 { font-size:1.6rem; margin:0 0 4px; }
+  .sub { margin:0 0 20px; color:#7a665c; }
+  .poster { background:var(--card); border:3px solid var(--line); border-radius:24px; padding:10px; }
+  .poster img { display:block; width:100%; height:auto; border-radius:16px; }
+  .links { display:grid; gap:14px; margin-top:20px; grid-template-columns:1fr 1fr; }
+  .link { display:block; padding:18px 20px; border-radius:20px; color:#fff; text-decoration:none; font-weight:700; }
+  .link small { display:block; font-weight:400; opacity:.92; margin-top:2px; }
+  .link.cbt { background:var(--orange); }
+  .link.reg { background:var(--purple); }
+  .link:hover { filter:brightness(1.07); }
+  .link:focus-visible { outline:3px solid var(--ink); outline-offset:3px; }
+  @media (max-width:600px) { .links { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <p><a href="index.html" style="color:#7a665c">← 수업실로 돌아가기</a></p>
+  <h1>🦊 시험안내</h1>
+  <p class="sub">컴퓨터활용능력 2급 필기시험, 여기서 한눈에 확인해요.</p>
+
+  <div class="poster">
+    <img src="exam-guide.jpg" alt="컴퓨터활용능력 2급 필기시험 안내: 컴퓨터일반 20문항, 스프레드시트일반 20문항, 각 과목 40점 이상 총점 60점 이상 합격">
+  </div>
+
+  <div class="links">
+    <a class="link cbt" href="https://cbt.youngjin.com/exam/index.php?no=2" target="_blank" rel="noopener">
+      🐰 CBT 모의고사 풀어보기
+      <small>실제 시험과 비슷한 환경에서 연습해요</small>
+    </a>
+    <a class="link reg" href="https://license.korcham.net/kor/member/login.jsp" target="_blank" rel="noopener">
+      🐘 시험 접수하러 가기
+      <small>한국상공회의소 자격평가사업단</small>
+    </a>
+  </div>
+</main>
+</body>
+</html>
