@@ -158,7 +158,8 @@ ZONES.forEach((z, zi) => {
     p.files.forEach(([label, url]) => {
       if (url) {
         const a = document.createElement("a");
-        a.className = "btn"; a.href = url; a.target = "_blank"; a.rel = "noopener";
+        a.className = "btn"; a.href = url; a.rel = "noopener";
+        if (/\.xlsx$/i.test(url)) { a.setAttribute("download", ""); } else { a.target = "_blank"; }
         a.textContent = label;
         btns.appendChild(a);
       } else {
