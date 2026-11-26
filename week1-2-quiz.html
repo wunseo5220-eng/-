@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="handbook">
+  <title>컴활 2급 필기 · CPU 3대 구조 &amp; 기억장치 핵심 퀴즈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces (Handbook) */
+      --background: #ffffff;
+      --surface-container-low: #f3f2f1;
+      --surface-container: #e8e7e5;
+      --surface-container-high: #dbdad9;
+
+      /* Ink */
+      --on-surface: #0b0c0c;
+      --on-surface-variant: #505a5f;
+
+      /* Rules */
+      --outline: #0b0c0c;
+      --outline-variant: #b1b4b6;
+
+      /* Accents */
+      --primary: #162e51;
+      --on-primary: #ffffff;
+      --primary-container: #d2e2f1;
+      --on-primary-container: #0c2d4a;
+      --secondary: #4c2c92;
+      --tertiary: #1a569e;
+      --error: #d4351c;
+      --on-error: #ffffff;
+
+      /* Data series */
+      --data-1: #1a569e;
+      --data-2: #c75a0a;
+      --data-3: #28a197;
+      --data-4: #4c2c92;
+      --data-context: #b1b4b6;
+
+      /* Fonts (Korean + Public Sans) */
+      --font-headline: 'Noto Sans KR', 'Public Sans', sans-serif;
+      --font-body: 'Noto Sans KR', 'Public Sans', sans-serif;
+      --font-label: 'Noto Sans KR', 'Public Sans', sans-serif;
+
+      /* Shape */
+      --rounded: 0;
+      --rounded-lg: 0;
+      --rounded-full: 0;
+
+      /* Handbook effects */
+      --top-index-rule: 6px solid var(--primary);
+      --inset-rule: 5px solid var(--tertiary);
+      --inset-rule-positive: 5px solid var(--positive);
+      --inset-rule-error: 5px solid var(--error);
+      --button-ground: 0 2px 0 #091526;
+      --button-ground-secondary: 0 2px 0 #858686;
+      --focus-yellow: #ffdd00;
+      --focus-ring: 3px solid var(--focus-yellow);
+      --focus-bar: inset 0 0 0 2px var(--on-surface);
+      --focus-underline: 0 -2px var(--focus-yellow), 0 4px var(--on-surface);
+
+      /* Shared semantic tokens */
+      --positive: #00703c;
+      --on-positive: #ffffff;
+      --positive-container: #eef7f2;
+      --warning: #944800;
+      --focus: #ffdd00;
+
+      /* Type scale (Focused Tool) */
+      --display-size: clamp(1.625rem, 1.35rem + 1.1vw, 2.125rem);
+      --headline-size: clamp(1.2rem, 1.08rem + 0.45vw, 1.45rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.95rem, 0.92rem + 0.15vw, 1.0625rem);
+      --label-size: 0.78rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 200ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
+    header { position: static !important; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1120px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Top index bar */
+    .index-header {
+      border-top: var(--top-index-rule);
+      border-bottom: 1px solid var(--on-surface);
+      padding: var(--space-sm) 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      color: var(--on-surface);
+    }
+    .index-header__meta {
+      color: var(--on-surface-variant);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Page title block */
+    .hero-block {
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+    }
+    .hero-title {
+      margin: 0 0 var(--space-xs) 0;
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0;
+      color: var(--on-surface);
+    }
+    .hero-lede {
+      margin: 0;
+      max-width: 68ch;
+      color: var(--on-surface-variant);
+      font-size: var(--subhead-size);
+      line-height: 1.55;
+    }
+
+    /* Category & mode filter bar */
+    .mode-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-sm);
+    }
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .tab-btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .tab-btn:hover {
+      background-color: var(--surface-container-low);
+      border-color: var(--on-surface);
+    }
+    .tab-btn.is-active {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+    .tab-btn:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+
+    /* Retry banner */
+    .retry-banner {
+      border-left: var(--inset-rule);
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .retry-banner__title {
+      font-weight: 800;
+      margin: 0 0 var(--space-xs) 0;
+    }
+    .retry-banner__desc {
+      margin: 0;
+      font-size: 0.925rem;
+    }
+
+    /* Asymmetric 2-column quiz workspace */
+    .quiz-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    /* Main Question Card */
+    .question-panel {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .question-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .question-meta-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 34px;
+      padding: 0 var(--space-sm);
+      background-color: var(--primary);
+      color: var(--on-primary);
+      font-weight: 800;
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .topic-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: var(--space-xs) var(--space-sm);
+      background-color: var(--primary-container);
+      color: var(--on-primary-container);
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: var(--rounded);
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 34px;
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      background-color: var(--surface-container-low);
+      color: var(--on-surface-variant);
+      border: 1px solid var(--outline-variant);
+    }
+    .status-tag--correct {
+      background-color: var(--positive-container);
+      color: var(--positive);
+      border-color: var(--positive);
+    }
+    .status-tag--wrong {
+      background-color: var(--background);
+      color: var(--error);
+      border-color: var(--error);
+    }
+
+    .question-title {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--on-surface);
+    }
+
+    /* Hint toggle & inset panel */
+    .hint-area {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+    .inset {
+      width: 100%;
+      border-left: var(--inset-rule);
+      background-color: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+    }
+    .hint-box__label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--tertiary);
+      margin-bottom: var(--space-xs);
+    }
+    .hint-box__text {
+      margin: 0;
+      color: var(--on-surface);
+      font-size: 0.96rem;
+    }
+
+    /* Answer Choices */
+    .choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .choice-btn {
+      width: 100%;
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      border: 2px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      background-color: var(--background);
+      color: var(--on-surface);
+      text-align: left;
+      font-size: var(--body-size);
+      font-weight: 500;
+      line-height: 1.45;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .choice-btn:hover:not(:disabled) {
+      background-color: var(--surface-container-low);
+      border-color: var(--on-surface);
+    }
+    .choice-btn:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+    .choice-btn:disabled {
+      cursor: default;
+    }
+    .choice-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--outline);
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      font-weight: 800;
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .choice-badge {
+      font-size: 0.825rem;
+      font-weight: 800;
+      padding: var(--space-xs) var(--space-sm);
+      white-space: nowrap;
+    }
+
+    /* Choice feedback states (error red ONLY on white background for >=4.5:1 AA contrast) */
+    .choice-btn.is-correct {
+      background-color: var(--positive-container);
+      border-color: var(--positive);
+      border-left: 6px solid var(--positive);
+      font-weight: 700;
+    }
+    .choice-btn.is-correct .choice-num {
+      background-color: var(--positive);
+      color: var(--on-positive);
+      border-color: var(--positive);
+    }
+    .choice-btn.is-correct .choice-badge {
+      color: var(--positive);
+    }
+
+    .choice-btn.is-wrong {
+      background-color: var(--background);
+      border-color: var(--error);
+      border-left: 6px solid var(--error);
+      font-weight: 700;
+    }
+    .choice-btn.is-wrong .choice-num {
+      background-color: var(--error);
+      color: var(--on-error);
+      border-color: var(--error);
+    }
+    .choice-btn.is-wrong .choice-badge {
+      color: var(--error);
+    }
+
+    .choice-btn.is-dimmed {
+      opacity: 0.68;
+    }
+
+    /* Immediate Explanation Box */
+    .explanation-box {
+      padding: var(--space-lg);
+      background-color: var(--background);
+      border: 1px solid var(--outline-variant);
+      border-left: 6px solid var(--positive);
+    }
+    .explanation-box.is-wrong-feedback {
+      border-left-color: var(--error);
+    }
+    .explanation-verdict {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-headline);
+      font-size: 1.125rem;
+      font-weight: 800;
+      margin: 0 0 var(--space-sm) 0;
+    }
+    .explanation-verdict--correct { color: var(--positive); }
+    .explanation-verdict--wrong { color: var(--error); }
+    .explanation-body {
+      margin: 0 0 var(--space-md) 0;
+      color: var(--on-surface);
+      line-height: 1.65;
+    }
+    .explanation-tip {
+      border-left: var(--inset-rule);
+      background-color: var(--surface-container-low);
+      padding: var(--space-sm) var(--space-md);
+      font-size: 0.925rem;
+      color: var(--on-surface);
+    }
+    .explanation-tip strong {
+      color: var(--primary);
+    }
+
+    /* Grounded Handbook Buttons */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      font-family: var(--font-label);
+      font-size: 0.975rem;
+      font-weight: 700;
+      line-height: 1.2;
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border: 0;
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-lg);
+      box-shadow: var(--button-ground);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+    .button:hover:not(:disabled) {
+      background-color: var(--on-primary-container);
+    }
+    .button--secondary {
+      background-color: var(--surface-container-low);
+      color: var(--on-surface);
+      box-shadow: var(--button-ground-secondary);
+      border: 1px solid var(--outline-variant);
+    }
+    .button--secondary:hover:not(:disabled) {
+      background-color: var(--surface-container);
+    }
+    .button--sm {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      font-size: 0.875rem;
+    }
+    .button:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+    .button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .button:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--outline-variant);
+    }
+
+    /* Sidebar (Progress + Question Map + Reset) */
+    .quiz-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      background-color: var(--surface-container-low);
+      padding: var(--space-lg);
+      border-left: var(--inset-rule);
+    }
+    .sidebar-section-title {
+      margin: 0 0 var(--space-sm) 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--on-surface);
+    }
+    .progress-bar-track {
+      width: 100%;
+      height: 10px;
+      background-color: var(--surface-container-high);
+      margin-bottom: var(--space-sm);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--primary);
+      transition: width var(--dur-short) var(--ease-out);
+    }
+    .stat-summary-list {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .stat-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid var(--outline-variant);
+      font-size: 0.9rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-summary-row:last-child {
+      border-bottom: 0;
+    }
+    .stat-label { color: var(--on-surface-variant); font-weight: 600; }
+    .stat-val { font-weight: 800; color: var(--on-surface); }
+    .stat-val--positive { color: var(--positive); }
+    .stat-val--error {
+      color: var(--error);
+      background-color: var(--background);
+      padding: 0 var(--space-xs);
+    }
+
+    /* Question Map Grid */
+    .q-map-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-xs);
+    }
+    .q-map-btn {
+      min-height: 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--outline-variant);
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .q-map-btn:hover {
+      border-color: var(--on-surface);
+      background-color: var(--surface-container);
+    }
+    .q-map-btn.is-current {
+      border: 2px solid var(--primary);
+      box-shadow: inset 0 -3px 0 var(--primary);
+    }
+    .q-map-btn.is-correct {
+      background-color: var(--positive-container);
+      color: var(--positive);
+      border-color: var(--positive);
+    }
+    .q-map-btn.is-wrong {
+      background-color: var(--background);
+      color: var(--error);
+      border-color: var(--error);
+    }
+    .q-map-btn:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+    .q-map-mark {
+      font-size: 0.7rem;
+      line-height: 1;
+      margin-top: var(--space-xs);
+    }
+
+    .sidebar-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--outline-variant);
+    }
+    .reset-hint-msg {
+      margin: 0;
+      font-size: 0.825rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Results & Wrong-Answer Retry View */
+    .results-panel {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
+    }
+    .results-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-tile {
+      border-left: var(--inset-rule);
+      background-color: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+    }
+    .kpi-tile--positive {
+      border-left-color: var(--positive);
+    }
+    .kpi-tile--error {
+      border-left-color: var(--error);
+      background-color: var(--background);
+      border-top: 1px solid var(--outline-variant);
+      border-right: 1px solid var(--outline-variant);
+      border-bottom: 1px solid var(--outline-variant);
+    }
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      margin-bottom: var(--space-xs);
+    }
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: var(--space-xs);
+    }
+    .kpi-value--positive { color: var(--positive); }
+    .kpi-value--error { color: var(--error); }
+    .kpi-caption {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Category Breakdown Table */
+    .table-wrap {
+      overflow-x: auto;
+    }
+    .handbook-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    .handbook-table th {
+      padding: var(--space-sm) var(--space-md) var(--space-sm) 0;
+      border-bottom: 2px solid var(--on-surface);
+      font-weight: 800;
+      color: var(--on-surface);
+    }
+    .handbook-table td {
+      padding: var(--space-sm) var(--space-md) var(--space-sm) 0;
+      border-bottom: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    .handbook-table th.num,
+    .handbook-table td.num {
+      text-align: right;
+      padding-right: 0;
+    }
+
+    /* Wrong Answer Notebook List */
+    .wrong-cta-box {
+      border-left: var(--inset-rule-error);
+      background-color: var(--background);
+      border-top: 1px solid var(--outline-variant);
+      border-right: 1px solid var(--outline-variant);
+      border-bottom: 1px solid var(--outline-variant);
+      padding: var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .perfect-cta-box {
+      border-left: var(--inset-rule-positive);
+      background-color: var(--positive-container);
+      padding: var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .wrong-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .wrong-item {
+      border: 1px solid var(--outline-variant);
+      border-left: 5px solid var(--error);
+      background-color: var(--background);
+      padding: var(--space-lg);
+    }
+    .wrong-item__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    .wrong-item__q {
+      margin: 0 0 var(--space-md) 0;
+      font-size: 1.0625rem;
+      font-weight: 800;
+      color: var(--on-surface);
+    }
+    .wrong-item__compare {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .compare-cell {
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid var(--outline-variant);
+      background-color: var(--background);
+      font-size: 0.9rem;
+    }
+    .compare-cell--mine {
+      border-left: 4px solid var(--error);
+    }
+    .compare-cell--answer {
+      border-left: 4px solid var(--positive);
+      background-color: var(--positive-container);
+    }
+    .compare-cell__label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: var(--space-xs);
+    }
+    .compare-cell--mine .compare-cell__label { color: var(--error); }
+    .compare-cell--answer .compare-cell__label { color: var(--positive); }
+
+    /* Footer source attribution */
+    .source-footer {
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--outline-variant);
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+    }
+
+    .is-hidden { display: none !important; }
+
+    /* Responsive adjustments */
+    @media (max-width: 860px) {
+      .quiz-workspace {
+        grid-template-columns: 1fr;
+      }
+      .q-map-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-md);
+      }
+      .q-map-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .choice-btn {
+        grid-template-columns: 32px minmax(0, 1fr);
+      }
+      .choice-badge {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+    <!-- Top Handbook Index Rule & Metadata -->
+    <header class="index-header">
+      <span>컴퓨터활용능력 2급 필기 · 1과목 컴퓨터 일반</span>
+      <span class="index-header__meta" id="header-progress-text">진행 0 / 16 · 정답률 0%</span>
+    </header>
+
+    <!-- Title & Framing -->
+    <section class="hero-block">
+      <h1 class="hero-title">CPU 3대 구조 &amp; 기억장치 핵심 퀴즈</h1>
+      <p class="hero-lede">
+        CPU 3대 구조(제어장치·연산장치·레지스터)와 기억장치(ROM/RAM·BIOS·펌웨어·SSD/HDD·특수메모리·속도 및 용량 단위) 핵심 개념을 실전 4지선다로 점검합니다. 각 문항의 힌트는 버튼을 눌러 직접 확인하고, 완료 후 틀린 문제만 모아 다시 풀 수 있습니다.
+      </p>
+    </section>
+
+    <!-- Category Filter & Mode Bar -->
+    <nav class="mode-toolbar" aria-label="단원 필터">
+      <div class="filter-group" id="category-tabs">
+        <button type="button" class="tab-btn is-active" data-cat="all" onclick="switchCategory('all')">전체 16문항</button>
+        <button type="button" class="tab-btn" data-cat="cpu" onclick="switchCategory('cpu')">CPU 3대 구조 (4)</button>
+        <button type="button" class="tab-btn" data-cat="romram" onclick="switchCategory('romram')">ROM/RAM·펌웨어 (4)</button>
+        <button type="button" class="tab-btn" data-cat="special" onclick="switchCategory('special')">특수·보조기억장치 (5)</button>
+        <button type="button" class="tab-btn" data-cat="units" onclick="switchCategory('units')">속도·용량 단위 (3)</button>
+      </div>
+      <div>
+        <button type="button" class="button button--secondary button--sm is-hidden" id="view-results-top-btn" onclick="openResultsView()">결과 및 오답노트 보기</button>
+      </div>
+    </nav>
+
+    <!-- Wrong-Answer Retry Banner (Visible only during 오답 재도전 mode) -->
+    <div class="retry-banner is-hidden" id="retry-banner" role="status">
+      <div>
+        <p class="retry-banner__title" id="retry-banner-title">오답 재도전 모드 진행 중</p>
+        <p class="retry-banner__desc">이전에 틀렸던 문항만 모아 다시 풀고 있습니다. 모든 오답을 맞힐 때까지 반복 복습할 수 있습니다.</p>
+      </div>
+      <button type="button" class="button button--secondary button--sm" onclick="exitRetryMode()">전체 학습으로 돌아가기</button>
+    </div>
+
+    <!-- Active Quiz Workspace -->
+    <main class="quiz-workspace" id="quiz-view">
+      <section class="question-panel" aria-live="polite">
+        <div class="question-meta-row">
+          <div class="question-meta-left">
+            <span class="step-badge" id="q-step-badge">01</span>
+            <span class="topic-tag" id="q-topic-tag">CPU 3대 구조</span>
+          </div>
+          <span class="status-tag" id="q-status-tag">미풀이</span>
+        </div>
+
+        <h2 class="question-title" id="q-prompt">문항을 불러오는 중입니다…</h2>
+
+        <!-- Dedicated Hint Toggle (must click to display hint) -->
+        <div class="hint-area">
+          <button type="button" class="button button--secondary button--sm" id="hint-toggle-btn" aria-expanded="false" aria-controls="hint-box" onclick="toggleHint()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>
+            </svg>
+            <span id="hint-toggle-label">힌트 보기</span>
+          </button>
+          <div class="inset is-hidden" id="hint-box">
+            <div class="hint-box__label">학습 힌트</div>
+            <p class="hint-box__text" id="hint-text"></p>
+          </div>
+        </div>
+
+        <!-- 4 Choices -->
+        <ul class="choices-list" id="choices-list" role="radiogroup" aria-label="선택지"></ul>
+
+        <!-- Immediate Feedback & Detailed Explanation -->
+        <div class="explanation-box is-hidden" id="explanation-box">
+          <p class="explanation-verdict" id="explanation-verdict"></p>
+          <p class="explanation-body" id="explanation-body"></p>
+          <div class="explanation-tip" id="explanation-tip"></div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="nav-actions">
+          <button type="button" class="button button--secondary" id="prev-btn" onclick="goPrevQuestion()">이전 문제</button>
+          <button type="button" class="button" id="next-btn" onclick="goNextOrFinish()">다음 문제</button>
+        </div>
+      </section>
+
+      <!-- Side Status & Question Map -->
+      <aside class="quiz-sidebar" aria-label="풀이 현황 및 문항 이동">
+        <div>
+          <h3 class="sidebar-section-title">현재 진행률</h3>
+          <div class="progress-bar-track" aria-hidden="true">
+            <div class="progress-bar-fill" id="sidebar-progress-fill" style="width: 0%;"></div>
+          </div>
+          <ul class="stat-summary-list">
+            <li class="stat-summary-row">
+              <span class="stat-label">풀이 완료</span>
+              <span class="stat-val" id="stat-answered">0 / 16</span>
+            </li>
+            <li class="stat-summary-row">
+              <span class="stat-label">정답</span>
+              <span class="stat-val stat-val--positive" id="stat-correct">0문항</span>
+            </li>
+            <li class="stat-summary-row">
+              <span class="stat-label">오답</span>
+              <span class="stat-val stat-val--error" id="stat-wrong">0문항</span>
+            </li>
+            <li class="stat-summary-row">
+              <span class="stat-label">힌트 확인</span>
+              <span class="stat-val" id="stat-hints">0회</span>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="sidebar-section-title">문항 번호표</h3>
+          <div class="q-map-grid" id="q-map-grid"></div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button type="button" class="button button--secondary button--sm is-hidden" id="sidebar-retry-btn" onclick="startWrongRetry()">
+            틀린 문제만 모아 풀기
+          </button>
+          <button type="button" class="button button--secondary button--sm" id="reset-btn" data-armed="false" onclick="handleResetClick(this)">
+            풀이 기록 초기화
+          </button>
+          <p class="reset-hint-msg is-hidden" id="reset-msg">한 번 더 누르면 현재 풀이 기록이 초기화됩니다.</p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Results & Wrong-Answer Retry View -->
+    <section class="results-panel is-hidden" id="results-view" aria-live="polite">
+      <div class="question-meta-row">
+        <div class="question-meta-left">
+          <span class="step-badge">결과</span>
+          <span class="topic-tag" id="results-mode-tag">전체 16문항 학습 결과</span>
+        </div>
+        <button type="button" class="button button--secondary button--sm" onclick="backToQuiz()">문항 화면으로 돌아가기</button>
+      </div>
+
+      <!-- KPI Figures -->
+      <div class="results-kpi-grid">
+        <div class="kpi-tile kpi-tile--positive" id="kpi-score-tile">
+          <div class="kpi-label">환산 점수 (100점 만점)</div>
+          <div class="kpi-value kpi-value--positive" id="kpi-score-val">0점</div>
+          <div class="kpi-caption" id="kpi-score-caption">컴활 2급 필기 합격 기준 60점 이상</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">정답 / 전체 문항</div>
+          <div class="kpi-value" id="kpi-count-val">0 / 16</div>
+          <div class="kpi-caption" id="kpi-hint-caption">힌트 사용 0회</div>
+        </div>
+        <div class="kpi-tile kpi-tile--error" id="kpi-wrong-tile">
+          <div class="kpi-label">오답 문항 수</div>
+          <div class="kpi-value kpi-value--error" id="kpi-wrong-val">0문항</div>
+          <div class="kpi-caption" id="kpi-wrong-caption">틀린 문제만 다시 풀기 가능</div>
+        </div>
+      </div>
+
+      <!-- Wrong Answer Retry Action Banner -->
+      <div class="wrong-cta-box is-hidden" id="wrong-cta-box">
+        <div>
+          <h2 class="question-title" style="font-size: var(--subhead-size); margin-bottom: var(--space-xs);">
+            틀린 문제 <span id="wrong-cta-count">0</span>문항을 오답 재도전으로 바로 복습하세요
+          </h2>
+          <p class="hero-lede" style="font-size: 0.925rem;">
+            버튼을 누르면 틀렸던 문항만 모아 새 퀴즈 세트로 구성합니다. 힌트와 해설도 다시 확인할 수 있습니다.
+          </p>
+        </div>
+        <button type="button" class="button" onclick="startWrongRetry()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>
+          </svg>
+          <span>틀린 문제만 다시 풀기 (<span id="wrong-btn-count">0</span>문항)</span>
+        </button>
+      </div>
+
+      <!-- Perfect Score Banner -->
+      <div class="perfect-cta-box is-hidden" id="perfect-cta-box">
+        <div>
+          <h2 class="question-title" style="font-size: var(--subhead-size); color: var(--positive); margin-bottom: var(--space-xs);">
+            이번 세트의 모든 문항을 맞혔습니다!
+          </h2>
+          <p class="hero-lede" style="font-size: 0.925rem; color: var(--on-surface);">
+            CPU 3대 구조와 기억장치 핵심 개념을 정확히 이해하셨습니다. 전체 문항을 다시 풀거나 다른 단원을 점검해 보세요.
+          </p>
+        </div>
+        <button type="button" class="button" onclick="restartCurrentSet()">전체 다시 풀기</button>
+      </div>
+
+      <!-- Category Breakdown Table -->
+      <div>
+        <h2 class="sidebar-section-title" style="font-size: 1.05rem;">단원별 정답 현황</h2>
+        <div class="table-wrap">
+          <table class="handbook-table">
+            <thead>
+              <tr>
+                <th>단원</th>
+                <th class="num">출제</th>
+                <th class="num">정답</th>
+                <th class="num">오답</th>
+                <th class="num">정답률</th>
+              </tr>
+            </thead>
+            <tbody id="category-breakdown-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Wrong Answer Notebook List -->
+      <div id="wrong-notebook-section">
+        <h2 class="sidebar-section-title" style="font-size: 1.05rem;">오답노트 상세 보기</h2>
+        <div class="wrong-list" id="wrong-list"></div>
+      </div>
+
+      <!-- Secondary Actions -->
+      <div class="nav-actions">
+        <button type="button" class="button button--secondary" onclick="restartAllQuestions()">전체 16문항 처음부터 풀기</button>
+        <button type="button" class="button button--secondary" onclick="backToQuiz()">문항 화면으로 돌아가기</button>
+      </div>
+    </section>
+
+    <footer class="source-footer">
+      학습 근거 자료: 컴활 2급 필기 「CPU 3대 구조 완벽 해부」, 「기억장치 완벽 해부」 요약 자료 및 1과목 컴퓨터 일반 핵심 기출 정리 (합격 기준: 과목당 40점 이상, 전 과목 평균 60점 이상).
+    </footer>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    const CATEGORY_LABELS = {
+      cpu: `CPU 3대 구조`,
+      romram: `ROM/RAM·펌웨어`,
+      special: `특수·보조기억장치`,
+      units: `속도·용량 단위`
+    };
+
+    const QUESTIONS = [
+      {
+        id: 1,
+        category: `cpu`,
+        subtopic: `CPU 3대 구성 요소`,
+        prompt: `중앙처리장치(CPU)를 구성하는 3대 핵심 장치의 조합으로 옳은 것은?`,
+        hint: `CPU는 사람의 두뇌 역할을 하며 명령을 지시·해독하는 장치, 계산하는 장치, 그리고 내부의 가장 빠른 임시 기억장소로 이루어집니다.`,
+        options: [
+          `제어장치, 연산장치, 레지스터`,
+          `제어장치, 주기억장치, 보조기억장치`,
+          `입력장치, 출력장치, 연산장치`,
+          `연산장치, 캐시 메모리, 플립플롭`
+        ],
+        answerIndex: 0,
+        explanation: `중앙처리장치(CPU)는 제어장치(Control Unit), 연산장치(ALU), 레지스터(Register)의 3대 구조로 구성됩니다. 입력장치와 출력장치는 주변장치이며, 주기억장치·보조기억장치는 CPU 외부 기억장치입니다.`,
+        tip: `핵심 암기: CPU 3대 구조 = 제어장치 + 연산장치(ALU) + 레지스터`
+      },
+      {
+        id: 2,
+        category: `cpu`,
+        subtopic: `제어장치 · 레지스터`,
+        prompt: `제어장치에서 사용하는 레지스터 중 ‘다음에 실행할 명령어의 번지(주소)’를 기억하는 것은 무엇인가?`,
+        hint: `영문 약자 PC로 불리며, ‘현재 실행 중인 명령의 내용’을 기억하는 명령 레지스터(IR)와 자주 비교 출제됩니다.`,
+        options: [
+          `명령 레지스터 (IR)`,
+          `프로그램 카운터 (PC)`,
+          `누산기 (AC)`,
+          `메모리 버퍼 레지스터 (MBR)`
+        ],
+        answerIndex: 1,
+        explanation: `프로그램 카운터(PC; Program Counter)는 다음에 실행할 명령어의 번지(주소)를 기억합니다. 명령 레지스터(IR)는 현재 실행 중인 명령의 내용을, 누산기(AC)는 연산 결과값을, MBR은 기억장치를 출입하는 데이터를 잠시 기억합니다.`,
+        tip: `핵심 구분: PC(다음 번지) vs IR(현재 명령 내용) vs MAR(출입 주소) vs MBR(출입 데이터)`
+      },
+      {
+        id: 3,
+        category: `cpu`,
+        subtopic: `연산장치(ALU) · 누산기`,
+        prompt: `연산장치(ALU)가 산술·논리 연산을 수행한 뒤, 그 연산된 결과값을 일시적으로 저장하는 레지스터는?`,
+        hint: `영문 약자 AC(Accumulator)를 사용하며, 계산된 값을 일시적으로 ‘누적’해 보관하는 역할을 합니다.`,
+        options: [
+          `가산기 (Adder)`,
+          `명령 해독기 (Decoder)`,
+          `누산기 (AC)`,
+          `부호기 (Encoder)`
+        ],
+        answerIndex: 2,
+        explanation: `누산기(AC; Accumulator)는 연산장치(ALU)가 수행한 산술(+, −) 및 논리(AND, OR, NOT) 연산 결과값을 일시적으로 저장하는 레지스터입니다. 가산기는 2진수 덧셈 회로이며, 해독기와 부호기는 제어장치에 속합니다.`,
+        tip: `핵심 암기: PC(다음 번지) · IR(현재 명령) · AC(연산 결과 일시 저장)`
+      },
+      {
+        id: 4,
+        category: `cpu`,
+        subtopic: `레지스터 특징`,
+        prompt: `CPU 내부의 임시 기억장소인 레지스터(Register)에 대한 설명으로 옳지 않은 것은?`,
+        hint: `레지스터는 메모리 계층 중 속도가 가장 빠르며, 기본 소자와 용량 크기 관점에서 다른 메모리와 뚜렷이 구분됩니다.`,
+        options: [
+          `메모리 중에서 접근 속도가 가장 빠르다.`,
+          `플립플롭(Flip-Flop)이나 래치(Latch) 등을 연결하여 만든다.`,
+          `한 번에 여러 개를 처리할 수 있는 병렬 구조로 되어 있다.`,
+          `주기억장치보다 저장 용량이 크고 가격이 저렴하다.`
+        ],
+        answerIndex: 3,
+        explanation: `레지스터는 CPU 내부에서 명령어나 중간 연산 결과를 일시적으로 기억하는 ‘소량’의 임시 기억장소입니다. 속도가 가장 빠르지만 저장 용량은 매우 작고, 플립플롭이나 래치 소자를 병렬 구조로 연결해 구성합니다.`,
+        tip: `레지스터 크기 = 한 번에 처리 가능한 데이터 양 (메모리 용량 및 워드 크기와 관계)`
+      },
+      {
+        id: 5,
+        category: `romram`,
+        subtopic: `ROM vs RAM`,
+        prompt: `주기억장치 중 ROM(Read Only Memory)에 대한 설명으로 가장 옳은 것은?`,
+        hint: `ROM은 전원이 꺼져도 내용이 유지되는 비휘발성 메모리이며, 컴퓨터를 켤 때 필요한 기본 시스템 정보가 들어 있습니다.`,
+        options: [
+          `전원이 꺼지면 기억된 내용이 모두 사라지는 휘발성 메모리이다.`,
+          `현재 실행 중인 응용 프로그램과 데이터를 자유롭게 읽고 쓰는 공간이다.`,
+          `비휘발성 메모리로, BIOS·글자 폰트·자가진단 프로그램(POST) 등이 저장된다.`,
+          `전하 방전 때문에 주기적인 재충전(Refresh)이 반드시 필요하다.`
+        ],
+        answerIndex: 2,
+        explanation: `ROM은 전원이 꺼져도 내용이 지워지지 않는 비휘발성 메모리로, 주로 읽기 전용이며 기본 입·출력 시스템(BIOS), 글자 폰트, 전원 인가 시 자가진단(POST) 프로그램 등이 저장됩니다. 휘발성이며 실행 중인 프로그램이 올라가는 공간은 RAM입니다.`,
+        tip: `ROM = 비휘발성 + 읽기 위주(BIOS·POST·폰트) / RAM = 휘발성 + 자유로운 읽기·쓰기`
+      },
+      {
+        id: 6,
+        category: `romram`,
+        subtopic: `SRAM vs DRAM`,
+        prompt: `정적 램(SRAM)과 동적 램(DRAM)을 바르게 비교한 설명은?`,
+        hint: `DRAM은 콘덴서 방전 때문에 주기적인 재충전(Refresh)이 필요해 주기억장치로 쓰고, SRAM은 재충전 없이 빨라서 캐시 메모리에 씁니다.`,
+        options: [
+          `SRAM은 재충전이 불필요하고 속도가 빨라 주로 캐시 메모리에 사용된다.`,
+          `SRAM은 콘덴서로 구성되어 주기적인 재충전(Refresh)이 필요하다.`,
+          `DRAM은 플립플롭으로 구성되어 접근 속도가 SRAM보다 빠르다.`,
+          `DRAM은 집적도가 낮고 고가여서 주기억장치로 사용하기 어렵다.`
+        ],
+        answerIndex: 0,
+        explanation: `SRAM(정적 램)은 플립플롭으로 구성되어 전원 공급 중 내용이 유지(재충전 불필요)되며 속도가 빠르고 고가여서 캐시 메모리(Cache)에 사용됩니다. DRAM(동적 램)은 콘덴서로 구성되어 주기적 재충전(Refresh)이 필요하지만 집적도가 높고 저렴해 주기억장치에 사용됩니다.`,
+        tip: `암기 팁: S(Static/플립플롭/빠름/캐시) vs D(Dynamic/콘덴서/재충전/주기억장치)`
+      },
+      {
+        id: 7,
+        category: `romram`,
+        subtopic: `ROM의 종류`,
+        prompt: `다음 중 자외선(햇빛)을 이용하여 저장된 내용을 지우고 여러 번 읽고 쓸 수 있는 ROM은?`,
+        hint: `전기(Electrical)를 이용하는 것은 EEPROM이고, 자외선으로 지워 재기록하는 방식은 E가 하나만 붙은 종류입니다.`,
+        options: [
+          `Mask ROM`,
+          `PROM`,
+          `EPROM`,
+          `EEPROM`
+        ],
+        answerIndex: 2,
+        explanation: `EPROM은 자외선(햇빛)을 이용해 내용을 지우고 여러 번 읽고 쓰기가 가능한 ROM입니다. Mask ROM은 제조사에서 1회 기록 후 수정 불가, PROM은 사용자가 1회 기록 후 수정 불가, EEPROM은 전기를 이용해 여러 번 읽고 쓰기가 가능합니다.`,
+        tip: `구분: Mask ROM(제조사 1회) · PROM(사용자 1회) · EPROM(자외선) · EEPROM(전기)`
+      },
+      {
+        id: 8,
+        category: `romram`,
+        subtopic: `BIOS & 펌웨어`,
+        prompt: `하드웨어의 동작을 지시하며, 최근에는 플래시 롬(Flash ROM)에 저장되어 칩 교체 없이 소프트웨어 업그레이드만으로 성능을 향상시킬 수 있는 것은?`,
+        hint: `하드웨어와 소프트웨어의 중간 형태로, 주로 ROM에 반영구적으로 저장되어 하드웨어를 제어·관리하는 역할을 합니다.`,
+        options: [
+          `펌웨어 (Firmware)`,
+          `가상 메모리 (Virtual Memory)`,
+          `유틸리티 (Utility)`,
+          `컴파일러 (Compiler)`
+        ],
+        answerIndex: 0,
+        explanation: `펌웨어(Firmware)는 하드웨어와 소프트웨어의 중간 형태로 주로 ROM에 반영구적으로 저장되어 하드웨어를 제어·관리합니다. 대표적으로 ROM-BIOS가 있으며, 최근에는 플래시 롬에 저장되어 칩을 교체하지 않고도 소프트웨어 업그레이드만으로 오류 수정 및 기능 향상이 가능합니다.`,
+        tip: `핵심 키워드: 펌웨어 = 하드웨어·소프트웨어 중간 형태 + ROM 저장 + 칩 교체 없이 업그레이드`
+      },
+      {
+        id: 9,
+        category: `special`,
+        subtopic: `캐시 메모리`,
+        prompt: `CPU와 주기억장치(RAM) 사이에 위치하여 두 장치의 속도 차이에 따른 병목 현상을 줄이고 처리 속도를 높이는 메모리는?`,
+        hint: `접근 속도가 매우 빠른 SRAM 소자를 사용하며, 용량은 작지만 CPU 속도에 버금갈 만큼 빠릅니다.`,
+        options: [
+          `가상 메모리 (Virtual Memory)`,
+          `캐시 메모리 (Cache Memory)`,
+          `버퍼 메모리 (Buffer Memory)`,
+          `플래시 메모리 (Flash Memory)`
+        ],
+        answerIndex: 1,
+        explanation: `캐시 메모리(Cache Memory)는 고속의 CPU와 상대적으로 느린 주기억장치(DRAM) 사이에서 속도 차이를 완화해 컴퓨터 처리 속도를 향상시키는 메모리입니다. 빠른 SRAM을 사용하며 용량이 작고 가격이 비쌉니다.`,
+        tip: `기억 포인트: CPU ↔ [캐시 메모리(SRAM)] ↔ 주기억장치(DRAM)`
+      },
+      {
+        id: 10,
+        category: `special`,
+        subtopic: `가상 메모리`,
+        prompt: `주기억장치의 용량이 부족할 때 보조기억장치(하드디스크)의 일부를 주기억장치처럼 사용하는 메모리 기법은?`,
+        hint: `진짜 주기억장치가 아니라는 뜻에서 ‘가상’이라 부르며, 보조기억장치를 활용하지만 전원이 꺼지면 데이터가 소실됩니다.`,
+        options: [
+          `연관 메모리 (Associative Memory)`,
+          `버퍼 메모리 (Buffer Memory)`,
+          `가상 메모리 (Virtual Memory)`,
+          `플래시 메모리 (Flash Memory)`
+        ],
+        answerIndex: 2,
+        explanation: `가상 메모리(Virtual Memory)는 주기억장치 용량이 부족할 경우 보조기억장치(하드디스크)의 일부 공간을 주기억장치처럼 사용하는 기법입니다. 단, 전원이 꺼지면 내용이 소실되는 특징이 있습니다.`,
+        tip: `함정 주의: 보조기억장치를 빌려 쓰지만, 가상 메모리 기법의 데이터는 전원 차단 시 소실됨`
+      },
+      {
+        id: 11,
+        category: `special`,
+        subtopic: `연관·버퍼 메모리`,
+        prompt: `기억장치에 저장된 정보에 접근할 때 ‘주소’ 대신 ‘기억된 내용의 일부’를 이용하여 직접 접근함으로써 검색 속도를 높이는 메모리는?`,
+        hint: `주소를 찾아가지 않고 내용 일부(예: 해시태그 검색처럼)로 바로 접근하며, 캐시·가상 메모리의 매핑 테이블에 활용됩니다.`,
+        options: [
+          `버퍼 메모리 (Buffer Memory)`,
+          `연상(연관) 메모리 (Associative Memory)`,
+          `마스크 롬 (Mask ROM)`,
+          `동적 램 (DRAM)`
+        ],
+        answerIndex: 1,
+        explanation: `연상(연관) 메모리(Associative Memory)는 주소 대신 기억된 내용의 일부를 이용해 직접 접근하므로 정보 검색이 매우 신속합니다(단, 비용 증가). 반면 버퍼 메모리(Buffer Memory)는 두 장치 간 데이터 전송 시 속도 차이를 해결하기 위한 임시 저장 공간입니다.`,
+        tip: `구분: 연관 메모리(내용 일부로 신속 검색) vs 버퍼 메모리(장치 간 속도 차 해결 임시 공간)`
+      },
+      {
+        id: 12,
+        category: `special`,
+        subtopic: `플래시 메모리`,
+        prompt: `플래시 메모리(Flash Memory)의 특징으로 옳지 않은 것은?`,
+        hint: `플래시 메모리는 EEPROM의 일종인 비휘발성 메모리이며, 바이트(Byte) 단위가 아닌 특정 단위로 데이터를 저장합니다.`,
+        options: [
+          `EEPROM의 일종으로 전기를 이용해 여러 번 읽고 쓸 수 있다.`,
+          `전원이 꺼져도 내용이 지워지지 않는 비휘발성 메모리이다.`,
+          `MP3 플레이어, 디지털 카메라, USB 메모리 등에 사용된다.`,
+          `바이트(Byte) 단위로만 저장하며 전력 소모가 매우 크다.`
+        ],
+        answerIndex: 3,
+        explanation: `플래시 메모리는 EEPROM의 일종인 비휘발성 메모리로, ‘블록(Block) 단위’로 데이터를 저장하며 전력 소모가 적고 속도가 빠릅니다. MP3, 디지털 카메라, USB 메모리 등의 저장 매체로 활용됩니다.`,
+        tip: `플래시 메모리 3대 키워드: EEPROM 일종 · 비휘발성 · 블록(Block) 단위 저장`
+      },
+      {
+        id: 13,
+        category: `special`,
+        subtopic: `SSD vs HDD`,
+        prompt: `HDD(하드디스크)와 비교한 SSD(Solid State Drive)의 특징으로 옳지 않은 것은?`,
+        hint: `SSD는 자성 물질을 입힌 금속 원판이나 회전 모터 같은 기계적 장치가 없는 반도체를 사용합니다.`,
+        options: [
+          `기계적 장치가 없는 반도체를 이용하여 정보를 저장한다.`,
+          `부팅 속도와 데이터 입·출력 속도가 HDD보다 빠르다.`,
+          `발열과 소음이 적고 충격에 강하며 배드 섹터가 발생하지 않는다.`,
+          `금속 원판을 고속 회전시켜 읽고 쓰므로 소음과 전력 소모가 크다.`
+        ],
+        answerIndex: 3,
+        explanation: `자성 물질을 입힌 금속 원판을 여러 장 겹쳐 회전시키며 읽고 쓰는 장치는 HDD입니다. SSD는 반도체를 이용해 고속 입·출력이 가능하고 소형화·경량화에 유리하며, 발열·소음·전력 소모가 적고 충격에 강하며 배드 섹터가 발생하지 않습니다.`,
+        tip: `SSD 핵심: 반도체 이용 · 무소음/저발열 · 내충격성 · 배드 섹터 없음 · 빠른 부팅`
+      },
+      {
+        id: 14,
+        category: `units`,
+        subtopic: `접근 속도 비교`,
+        prompt: `다음 기억장치들을 접근 속도가 ‘빠른 것부터 느린 것’ 순서로 바르게 나열한 것은?`,
+        hint: `두문자 암기법 “레 - 캐 - 램 - 롬 - S - H” (또는 “레캐주보”) 순서를 떠올려 보세요.`,
+        options: [
+          `캐시 메모리 → 레지스터 → RAM → ROM → SSD → HDD`,
+          `레지스터 → 캐시 메모리 → RAM → ROM → SSD → HDD`,
+          `레지스터 → RAM → 캐시 메모리 → ROM → HDD → SSD`,
+          `캐시 메모리 → RAM → 레지스터 → SSD → ROM → HDD`
+        ],
+        answerIndex: 1,
+        explanation: `기억장치는 CPU와 가까울수록 접근 속도가 빠릅니다. 빠른 순서대로 나열하면 ‘레지스터 > 캐시 메모리(SRAM) > 램(DRAM) > 롬(ROM) > SSD > HDD > DVD/CD’가 됩니다.`,
+        tip: `암기 공식: 레(지스터) - 캐(시) - 램(RAM) - 롬(ROM) - S(SD) - H(DD)`
+      },
+      {
+        id: 15,
+        category: `units`,
+        subtopic: `처리 속도 단위`,
+        prompt: `다음 기억장치 처리(연산) 속도 단위 중 가장 ‘빠른’ 속도를 나타내는 단위는?`,
+        hint: `시간 단위는 지수가 작을수록(거꾸로) 빠릅니다! “밀(ms) - 마(μs) - 나(ns) - 피(ps)” 순서를 확인하세요.`,
+        options: [
+          `ms (10⁻³초)`,
+          `μs (10⁻⁶초)`,
+          `ns (10⁻⁹초)`,
+          `ps (10⁻¹²초)`
+        ],
+        answerIndex: 3,
+        explanation: `처리 속도 단위는 1회 처리에 걸리는 시간이 짧을수록 빠릅니다. 느림 → 빠름 순서는 ms(밀리초, 10⁻³) → μs(마이크로초, 10⁻⁶) → ns(나노초, 10⁻⁹) → ps(피코초, 10⁻¹²) → fs(펨토초, 10⁻¹⁵) → as(아토초, 10⁻¹⁸)이므로 보기 중 ps가 가장 빠릅니다.`,
+        tip: `암기 팁: 밀(ms) · 마(μs) · 나(ns) · 피(ps) — 오른쪽으로 갈수록 1,000배씩 빨라짐`
+      },
+      {
+        id: 16,
+        category: `units`,
+        subtopic: `저장 용량 단위`,
+        prompt: `기억장치의 저장 용량 단위를 ‘작은 것부터 큰 것’ 순서로 바르게 나열한 것은?`,
+        hint: `암기법 “바 - 키 - 메 - 기 - 테 - 페(엑)”을 떠올려 보세요. 각 단계는 1,024배씩 커집니다.`,
+        options: [
+          `Byte → KB → MB → GB → TB → PB`,
+          `Byte → MB → KB → GB → PB → TB`,
+          `Byte → KB → GB → MB → TB → PB`,
+          `KB → Byte → MB → GB → PB → TB`
+        ],
+        answerIndex: 0,
+        explanation: `저장 용량 단위는 작은 것부터 Byte(8Bit) → KB → MB → GB → TB → PB → EB 순서로 커집니다. 각 단계는 1,024(2¹⁰)배씩 증가합니다(예: 1KB = 1,024Byte).`,
+        tip: `암기 팁: 바(Byte) · 키(KB) · 메(MB) · 기(GB) · 테(TB) · 페(PB) · 엑(EB)`
+      }
+    ];
+
+    const appState = {
+      activeCategory: `all`,
+      mode: `normal`,       // 'normal' | 'retry'
+      view: `quiz`,         // 'quiz' | 'results'
+      currentPos: 0,
+      retryIds: [],
+      answers: {},          // { [questionId]: chosenOptionIndex }
+      hintsOpened: {},      // { [questionId]: true }
+      hintUsedCount: 0
+    };
+
+    function getActiveQuestionIds() {
+      if (appState.mode === `retry`) {
+        return appState.retryIds.slice();
+      }
+      if (appState.activeCategory === `all`) {
+        return QUESTIONS.map(function (q) { return q.id; });
+      }
+      return QUESTIONS.filter(function (q) {
+        return q.category === appState.activeCategory;
+      }).map(function (q) {
+        return q.id;
+      });
+    }
+
+    function getQuestionById(id) {
+      for (let i = 0; i < QUESTIONS.length; i += 1) {
+        if (QUESTIONS[i].id === id) return QUESTIONS[i];
+      }
+      return null;
+    }
+
+    function computeWrongIds(idList) {
+      const wrongs = [];
+      for (let i = 0; i < idList.length; i += 1) {
+        const qId = idList[i];
+        const q = getQuestionById(qId);
+        const chosen = appState.answers[qId];
+        if (q && chosen !== undefined && chosen !== q.answerIndex) {
+          wrongs.push(qId);
+        }
+      }
+      return wrongs;
+    }
+
+    function computeStats(idList) {
+      let answered = 0;
+      let correct = 0;
+      let wrong = 0;
+      for (let i = 0; i < idList.length; i += 1) {
+        const qId = idList[i];
+        const q = getQuestionById(qId);
+        const chosen = appState.answers[qId];
+        if (q && chosen !== undefined) {
+          answered += 1;
+          if (chosen === q.answerIndex) {
+            correct += 1;
+          } else {
+            wrong += 1;
+          }
+        }
+      }
+      return {
+        total: idList.length,
+        answered: answered,
+        correct: correct,
+        wrong: wrong
+      };
+    }
+
+    async function persistState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+          await window.notebookAppApi.setAppState({
+            activeCategory: appState.activeCategory,
+            mode: appState.mode,
+            view: appState.view,
+            currentPos: appState.currentPos,
+            retryIds: appState.retryIds,
+            answers: appState.answers,
+            hintsOpened: appState.hintsOpened,
+            hintUsedCount: appState.hintUsedCount
+          });
+        }
+      } catch (err) {
+        // Ignore persistence errors in standalone preview
+      }
+    }
+
+    function restoreFromSaved(saved) {
+      if (!saved || typeof saved !== `object`) return;
+      if (typeof saved.activeCategory === `string`) appState.activeCategory = saved.activeCategory;
+      if (saved.mode === `normal` || saved.mode === `retry`) appState.mode = saved.mode;
+      if (saved.view === `quiz` || saved.view === `results`) appState.view = saved.view;
+      if (typeof saved.currentPos === `number`) appState.currentPos = saved.currentPos;
+      if (Array.isArray(saved.retryIds)) appState.retryIds = saved.retryIds;
+      if (saved.answers && typeof saved.answers === `object`) appState.answers = saved.answers;
+      if (saved.hintsOpened && typeof saved.hintsOpened === `object`) appState.hintsOpened = saved.hintsOpened;
+      if (typeof saved.hintUsedCount === `number`) appState.hintUsedCount = saved.hintUsedCount;
+    }
+
+    function renderAll() {
+      const activeIds = getActiveQuestionIds();
+      if (activeIds.length === 0) {
+        appState.mode = `normal`;
+        appState.activeCategory = `all`;
+        appState.currentPos = 0;
+      }
+      const ids = getActiveQuestionIds();
+      if (appState.currentPos >= ids.length) appState.currentPos = Math.max(0, ids.length - 1);
+      if (appState.currentPos < 0) appState.currentPos = 0;
+
+      const stats = computeStats(ids);
+      const pct = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
+
+      // Top header progress
+      const headerProgress = document.getElementById(`header-progress-text`);
+      if (headerProgress) {
+        headerProgress.textContent = `진행 ${stats.answered} / ${stats.total} · 정답률 ${pct}%`;
+      }
+
+      // Category tabs state
+      const tabsWrap = document.getElementById(`category-tabs`);
+      if (tabsWrap) {
+        const tabButtons = tabsWrap.querySelectorAll(`.tab-btn`);
+        for (let i = 0; i < tabButtons.length; i += 1) {
+          const btn = tabButtons[i];
+          const isCat = appState.mode === `normal` && btn.getAttribute(`data-cat`) === appState.activeCategory;
+          if (isCat) {
+            btn.classList.add(`is-active`);
+          } else {
+            btn.classList.remove(`is-active`);
+          }
+          btn.disabled = appState.mode === `retry`;
+        }
+      }
+
+      // Retry banner
+      const retryBanner = document.getElementById(`retry-banner`);
+      const retryTitle = document.getElementById(`retry-banner-title`);
+      if (retryBanner) {
+        if (appState.mode === `retry`) {
+          retryBanner.classList.remove(`is-hidden`);
+          if (retryTitle) {
+            retryTitle.textContent = `오답 재도전 모드 진행 중 (${ids.length}문항 집중 복습)`;
+          }
+        } else {
+          retryBanner.classList.add(`is-hidden`);
+        }
+      }
+
+      // Top "view results" button if all answered
+      const topResultsBtn = document.getElementById(`view-results-top-btn`);
+      if (topResultsBtn) {
+        if (stats.answered === stats.total && stats.total > 0 && appState.view === `quiz`) {
+          topResultsBtn.classList.remove(`is-hidden`);
+        } else {
+          topResultsBtn.classList.add(`is-hidden`);
+        }
+      }
+
+      const quizView = document.getElementById(`quiz-view`);
+      const resultsView = document.getElementById(`results-view`);
+      if (appState.view === `results`) {
+        if (quizView) quizView.classList.add(`is-hidden`);
+        if (resultsView) resultsView.classList.remove(`is-hidden`);
+        renderResultsView(ids, stats);
+      } else {
+        if (resultsView) resultsView.classList.add(`is-hidden`);
+        if (quizView) quizView.classList.remove(`is-hidden`);
+        renderQuestionView(ids, stats);
+      }
+    }
+
+    function renderQuestionView(ids, stats) {
+      const currentId = ids[appState.currentPos];
+      const q = getQuestionById(currentId);
+      if (!q) return;
+
+      const chosen = appState.answers[q.id];
+      const isAnswered = chosen !== undefined;
+      const isCorrect = isAnswered && chosen === q.answerIndex;
+      const hintOpen = Boolean(appState.hintsOpened[q.id]);
+
+      const stepBadge = document.getElementById(`q-step-badge`);
+      if (stepBadge) {
+        const numStr = String(appState.currentPos + 1).padStart(2, `0`);
+        const totalStr = String(ids.length).padStart(2, `0`);
+        stepBadge.textContent = `${numStr} / ${totalStr}`;
+      }
+
+      const topicTag = document.getElementById(`q-topic-tag`);
+      if (topicTag) {
+        topicTag.textContent = `${CATEGORY_LABELS[q.category]} · ${q.subtopic}`;
+      }
+
+      const statusTag = document.getElementById(`q-status-tag`);
+      if (statusTag) {
+        statusTag.classList.remove(`status-tag--correct`, `status-tag--wrong`);
+        if (!isAnswered) {
+          statusTag.textContent = `미풀이`;
+        } else if (isCorrect) {
+          statusTag.textContent = `정답 완료`;
+          statusTag.classList.add(`status-tag--correct`);
+        } else {
+          statusTag.textContent = `오답 기록`;
+          statusTag.classList.add(`status-tag--wrong`);
+        }
+      }
+
+      const promptEl = document.getElementById(`q-prompt`);
+      if (promptEl) {
+        promptEl.textContent = q.prompt;
+      }
+
+      // Hint toggle state (only shown when user clicks 힌트 보기)
+      const hintBtn = document.getElementById(`hint-toggle-btn`);
+      const hintLabel = document.getElementById(`hint-toggle-label`);
+      const hintBox = document.getElementById(`hint-box`);
+      const hintText = document.getElementById(`hint-text`);
+      if (hintText) hintText.textContent = q.hint;
+      if (hintBtn && hintLabel && hintBox) {
+        hintBtn.setAttribute(`aria-expanded`, hintOpen ? `true` : `false`);
+        hintLabel.textContent = hintOpen ? `힌트 숨기기` : `힌트 보기`;
+        if (hintOpen) {
+          hintBox.classList.remove(`is-hidden`);
+        } else {
+          hintBox.classList.add(`is-hidden`);
+        }
+      }
+
+      // Render 4 choices
+      const choicesList = document.getElementById(`choices-list`);
+      if (choicesList) {
+        choicesList.innerHTML = ``;
+        for (let i = 0; i < q.options.length; i += 1) {
+          const li = document.createElement(`li`);
+          const btn = document.createElement(`button`);
+          btn.type = `button`;
+          btn.className = `choice-btn`;
+          if (isAnswered) {
+            btn.disabled = true;
+            if (i === q.answerIndex) {
+              btn.classList.add(`is-correct`);
+            } else if (i === chosen) {
+              btn.classList.add(`is-wrong`);
+            } else {
+              btn.classList.add(`is-dimmed`);
+            }
+          }
+          btn.setAttribute(`onclick`, `selectAnswer(${q.id}, ${i})`);
+
+          const numSpan = document.createElement(`span`);
+          numSpan.className = `choice-num`;
+          numSpan.textContent = String(i + 1);
+
+          const textSpan = document.createElement(`span`);
+          textSpan.textContent = q.options[i];
+
+          const badgeSpan = document.createElement(`span`);
+          badgeSpan.className = `choice-badge`;
+          if (isAnswered) {
+            if (i === q.answerIndex && i === chosen) {
+              badgeSpan.textContent = `✓ 내 선택 (정답)`;
+            } else if (i === q.answerIndex) {
+              badgeSpan.textContent = `✓ 정답`;
+            } else if (i === chosen) {
+              badgeSpan.textContent = `✕ 내 선택 (오답)`;
+            }
+          }
+
+          btn.appendChild(numSpan);
+          btn.appendChild(textSpan);
+          btn.appendChild(badgeSpan);
+          li.appendChild(btn);
+          choicesList.appendChild(li);
+        }
+      }
+
+      // Immediate feedback & detailed explanation box
+      const expBox = document.getElementById(`explanation-box`);
+      const expVerdict = document.getElementById(`explanation-verdict`);
+      const expBody = document.getElementById(`explanation-body`);
+      const expTip = document.getElementById(`explanation-tip`);
+      if (expBox && expVerdict && expBody && expTip) {
+        if (isAnswered) {
+          expBox.classList.remove(`is-hidden`, `is-wrong-feedback`);
+          expVerdict.classList.remove(`explanation-verdict--correct`, `explanation-verdict--wrong`);
+          if (isCorrect) {
+            expVerdict.textContent = `정답입니다! (${q.answerIndex + 1}번)`;
+            expVerdict.classList.add(`explanation-verdict--correct`);
+          } else {
+            expBox.classList.add(`is-wrong-feedback`);
+            expVerdict.textContent = `오답입니다 — 정답은 ${q.answerIndex + 1}번입니다`;
+            expVerdict.classList.add(`explanation-verdict--wrong`);
+          }
+          expBody.textContent = q.explanation;
+          expTip.innerHTML = `<strong>핵심 정리:</strong> ${q.tip}`;
+        } else {
+          expBox.classList.add(`is-hidden`);
+        }
+      }
+
+      // Prev / Next buttons
+      const prevBtn = document.getElementById(`prev-btn`);
+      const nextBtn = document.getElementById(`next-btn`);
+      if (prevBtn) {
+        prevBtn.disabled = appState.currentPos === 0;
+      }
+      if (nextBtn) {
+        const isLast = appState.currentPos === ids.length - 1;
+        const allDone = stats.answered === stats.total;
+        if (isLast || allDone) {
+          nextBtn.textContent = isLast ? `결과 및 오답노트 보기` : `다음 문제`;
+        } else {
+          nextBtn.textContent = `다음 문제`;
+        }
+      }
+
+      // Sidebar stats & progress
+      const progressFill = document.getElementById(`sidebar-progress-fill`);
+      if (progressFill) {
+        const fillPct = stats.total > 0 ? Math.round((stats.answered / stats.total) * 100) : 0;
+        progressFill.style.width = `${fillPct}%`;
+      }
+      const statAnswered = document.getElementById(`stat-answered`);
+      if (statAnswered) statAnswered.textContent = `${stats.answered} / ${stats.total}`;
+      const statCorrect = document.getElementById(`stat-correct`);
+      if (statCorrect) statCorrect.textContent = `${stats.correct}문항`;
+      const statWrong = document.getElementById(`stat-wrong`);
+      if (statWrong) statWrong.textContent = `${stats.wrong}문항`;
+      const statHints = document.getElementById(`stat-hints`);
+      if (statHints) statHints.textContent = `${appState.hintUsedCount}회`;
+
+      // Sidebar question map
+      const qMapGrid = document.getElementById(`q-map-grid`);
+      if (qMapGrid) {
+        qMapGrid.innerHTML = ``;
+        for (let i = 0; i < ids.length; i += 1) {
+          const mapId = ids[i];
+          const mapQ = getQuestionById(mapId);
+          const mapChosen = appState.answers[mapId];
+          const mBtn = document.createElement(`button`);
+          mBtn.type = `button`;
+          mBtn.className = `q-map-btn`;
+          if (i === appState.currentPos) mBtn.classList.add(`is-current`);
+          let mark = `·`;
+          if (mapQ && mapChosen !== undefined) {
+            if (mapChosen === mapQ.answerIndex) {
+              mBtn.classList.add(`is-correct`);
+              mark = `✓`;
+            } else {
+              mBtn.classList.add(`is-wrong`);
+              mark = `✕`;
+            }
+          }
+          mBtn.setAttribute(`onclick`, `jumpToPos(${i})`);
+          mBtn.setAttribute(`aria-label`, `${i + 1}번 문항으로 이동`);
+          mBtn.innerHTML = `<span>${String(i + 1).padStart(2, `0`)}</span><span class="q-map-mark">${mark}</span>`;
+          qMapGrid.appendChild(mBtn);
+        }
+      }
+
+      // Sidebar quick retry button
+      const sidebarRetryBtn = document.getElementById(`sidebar-retry-btn`);
+      if (sidebarRetryBtn) {
+        if (stats.wrong > 0) {
+          sidebarRetryBtn.classList.remove(`is-hidden`);
+          sidebarRetryBtn.textContent = `틀린 문제만 다시 풀기 (${stats.wrong}문항)`;
+        } else {
+          sidebarRetryBtn.classList.add(`is-hidden`);
+        }
+      }
+
+      // Disarm reset button if active during render
+      disarmResetButton();
+    }
+
+    function renderResultsView(ids, stats) {
+      const score = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+      const wrongIds = computeWrongIds(ids);
+
+      const modeTag = document.getElementById(`results-mode-tag`);
+      if (modeTag) {
+        if (appState.mode === `retry`) {
+          modeTag.textContent = `오답 재도전 결과 (${ids.length}문항)`;
+        } else if (appState.activeCategory === `all`) {
+          modeTag.textContent = `전체 16문항 학습 결과`;
+        } else {
+          modeTag.textContent = `${CATEGORY_LABELS[appState.activeCategory]} 단원 결과`;
+        }
+      }
+
+      const kpiScoreTile = document.getElementById(`kpi-score-tile`);
+      const kpiScoreVal = document.getElementById(`kpi-score-val`);
+      const kpiScoreCaption = document.getElementById(`kpi-score-caption`);
+      if (kpiScoreVal && kpiScoreCaption && kpiScoreTile) {
+        kpiScoreVal.textContent = `${score}점`;
+        kpiScoreVal.classList.remove(`kpi-value--positive`, `kpi-value--error`);
+        kpiScoreTile.classList.remove(`kpi-tile--positive`, `kpi-tile--error`);
+        if (score >= 60) {
+          kpiScoreVal.classList.add(`kpi-value--positive`);
+          kpiScoreTile.classList.add(`kpi-tile--positive`);
+          kpiScoreCaption.textContent = `합격 기준(60점 이상) 충족`;
+        } else {
+          kpiScoreVal.classList.add(`kpi-value--error`);
+          kpiScoreTile.classList.add(`kpi-tile--error`);
+          kpiScoreCaption.textContent = `합격 기준(60점 이상) 미달 — 오답 복습 권장`;
+        }
+      }
+
+      const kpiCountVal = document.getElementById(`kpi-count-val`);
+      const kpiHintCaption = document.getElementById(`kpi-hint-caption`);
+      if (kpiCountVal) kpiCountVal.textContent = `${stats.correct} / ${stats.total}`;
+      if (kpiHintCaption) kpiHintCaption.textContent = `힌트 사용 총 ${appState.hintUsedCount}회`;
+
+      const kpiWrongVal = document.getElementById(`kpi-wrong-val`);
+      const kpiWrongCaption = document.getElementById(`kpi-wrong-caption`);
+      if (kpiWrongVal) kpiWrongVal.textContent = `${wrongIds.length}문항`;
+      if (kpiWrongCaption) {
+        kpiWrongCaption.textContent = wrongIds.length > 0
+          ? `아래 버튼으로 틀린 문항만 다시 풀 수 있습니다`
+          : `이번 세트에서 틀린 문항이 없습니다`;
+      }
+
+      const wrongCtaBox = document.getElementById(`wrong-cta-box`);
+      const perfectCtaBox = document.getElementById(`perfect-cta-box`);
+      const wrongCtaCount = document.getElementById(`wrong-cta-count`);
+      const wrongBtnCount = document.getElementById(`wrong-btn-count`);
+
+      if (wrongIds.length > 0) {
+        if (wrongCtaBox) wrongCtaBox.classList.remove(`is-hidden`);
+        if (perfectCtaBox) perfectCtaBox.classList.add(`is-hidden`);
+        if (wrongCtaCount) wrongCtaCount.textContent = String(wrongIds.length);
+        if (wrongBtnCount) wrongBtnCount.textContent = String(wrongIds.length);
+      } else {
+        if (wrongCtaBox) wrongCtaBox.classList.add(`is-hidden`);
+        if (perfectCtaBox) perfectCtaBox.classList.remove(`is-hidden`);
+      }
+
+      // Category breakdown table
+      const tbody = document.getElementById(`category-breakdown-tbody`);
+      if (tbody) {
+        tbody.innerHTML = ``;
+        const catKeys = [`cpu`, `romram`, `special`, `units`];
+        for (let i = 0; i < catKeys.length; i += 1) {
+          const cat = catKeys[i];
+          const catIds = QUESTIONS.filter(function (q) { return q.category === cat; }).map(function (q) { return q.id; });
+          const cStats = computeStats(catIds);
+          const cPct = cStats.answered > 0 ? Math.round((cStats.correct / cStats.answered) * 100) : 0;
+          const tr = document.createElement(`tr`);
+          tr.innerHTML = `
+            <td><strong>${CATEGORY_LABELS[cat]}</strong></td>
+            <td class="num">${cStats.total}</td>
+            <td class="num">${cStats.correct}</td>
+            <td class="num">${cStats.wrong}</td>
+            <td class="num">${cStats.answered > 0 ? cPct + `%` : `-`}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      }
+
+      // Wrong answer notebook list
+      const wrongNotebookSection = document.getElementById(`wrong-notebook-section`);
+      const wrongListEl = document.getElementById(`wrong-list`);
+      if (wrongNotebookSection && wrongListEl) {
+        if (wrongIds.length === 0) {
+          wrongNotebookSection.classList.add(`is-hidden`);
+        } else {
+          wrongNotebookSection.classList.remove(`is-hidden`);
+          wrongListEl.innerHTML = ``;
+          for (let i = 0; i < wrongIds.length; i += 1) {
+            const wId = wrongIds[i];
+            const wq = getQuestionById(wId);
+            if (!wq) continue;
+            const myIdx = appState.answers[wId];
+            const item = document.createElement(`article`);
+            item.className = `wrong-item`;
+            item.innerHTML = `
+              <div class="wrong-item__header">
+                <span class="step-badge">${String(wq.id).padStart(2, `0`)}</span>
+                <span class="topic-tag">${CATEGORY_LABELS[wq.category]} · ${wq.subtopic}</span>
+              </div>
+              <p class="wrong-item__q">${wq.prompt}</p>
+              <div class="wrong-item__compare">
+                <div class="compare-cell compare-cell--mine">
+                  <span class="compare-cell__label">내가 고른 답 (${myIdx + 1}번)</span>
+                  <span>${wq.options[myIdx]}</span>
+                </div>
+                <div class="compare-cell compare-cell--answer">
+                  <span class="compare-cell__label">정답 (${wq.answerIndex + 1}번)</span>
+                  <span>${wq.options[wq.answerIndex]}</span>
+                </div>
+              </div>
+              <p class="explanation-body" style="margin-bottom: var(--space-sm);">${wq.explanation}</p>
+              <div class="explanation-tip"><strong>핵심 정리:</strong> ${wq.tip}</div>
+            `;
+            wrongListEl.appendChild(item);
+          }
+        }
+      }
+    }
+
+    /* Hoisted event handlers */
+    function switchCategory(cat) {
+      if (appState.mode === `retry`) return;
+      appState.activeCategory = cat;
+      appState.view = `quiz`;
+      appState.currentPos = 0;
+      renderAll();
+      persistState();
+    }
+
+    function toggleHint() {
+      const ids = getActiveQuestionIds();
+      const qId = ids[appState.currentPos];
+      if (!qId) return;
+      const isCurrentlyOpen = Boolean(appState.hintsOpened[qId]);
+      if (!isCurrentlyOpen) {
+        appState.hintsOpened[qId] = true;
+        appState.hintUsedCount += 1;
+      } else {
+        appState.hintsOpened[qId] = false;
+      }
+      renderAll();
+      persistState();
+    }
+
+    function selectAnswer(qId, optIdx) {
+      if (appState.answers[qId] !== undefined) return;
+      appState.answers[qId] = optIdx;
+      renderAll();
+      persistState();
+    }
+
+    function goPrevQuestion() {
+      if (appState.currentPos > 0) {
+        appState.currentPos -= 1;
+        renderAll();
+        persistState();
+      }
+    }
+
+    function goNextOrFinish() {
+      const ids = getActiveQuestionIds();
+      if (appState.currentPos < ids.length - 1) {
+        appState.currentPos += 1;
+        renderAll();
+        persistState();
+      } else {
+        appState.view = `results`;
+        renderAll();
+        persistState();
+      }
+    }
+
+    function jumpToPos(pos) {
+      const ids = getActiveQuestionIds();
+      if (pos >= 0 && pos < ids.length) {
+        appState.currentPos = pos;
+        appState.view = `quiz`;
+        renderAll();
+        persistState();
+      }
+    }
+
+    function openResultsView() {
+      appState.view = `results`;
+      renderAll();
+      persistState();
+    }
+
+    function backToQuiz() {
+      appState.view = `quiz`;
+      renderAll();
+      persistState();
+    }
+
+    function startWrongRetry() {
+      const currentIds = getActiveQuestionIds();
+      const wrongIds = computeWrongIds(currentIds);
+      if (wrongIds.length === 0) return;
+
+      // Clear previous answers & hint open state ONLY for the wrong questions so the user can re-solve them cleanly
+      for (let i = 0; i < wrongIds.length; i += 1) {
+        const wId = wrongIds[i];
+        delete appState.answers[wId];
+        delete appState.hintsOpened[wId];
+      }
+      appState.mode = `retry`;
+      appState.retryIds = wrongIds;
+      appState.currentPos = 0;
+      appState.view = `quiz`;
+      renderAll();
+      persistState();
+    }
+
+    function exitRetryMode() {
+      appState.mode = `normal`;
+      appState.retryIds = [];
+      appState.currentPos = 0;
+      appState.view = `quiz`;
+      renderAll();
+      persistState();
+    }
+
+    function restartCurrentSet() {
+      const ids = getActiveQuestionIds();
+      for (let i = 0; i < ids.length; i += 1) {
+        delete appState.answers[ids[i]];
+        delete appState.hintsOpened[ids[i]];
+      }
+      if (appState.mode === `retry`) {
+        appState.mode = `normal`;
+        appState.retryIds = [];
+      }
+      appState.currentPos = 0;
+      appState.view = `quiz`;
+      renderAll();
+      persistState();
+    }
+
+    function restartAllQuestions() {
+      appState.activeCategory = `all`;
+      appState.mode = `normal`;
+      appState.retryIds = [];
+      appState.answers = {};
+      appState.hintsOpened = {};
+      appState.hintUsedCount = 0;
+      appState.currentPos = 0;
+      appState.view = `quiz`;
+      renderAll();
+      persistState();
+    }
+
+    function disarmResetButton() {
+      const btn = document.getElementById(`reset-btn`);
+      const msg = document.getElementById(`reset-msg`);
+      if (btn) {
+        btn.dataset.armed = `false`;
+        btn.textContent = `풀이 기록 초기화`;
+      }
+      if (msg) {
+        msg.classList.add(`is-hidden`);
+      }
+    }
+
+    function handleResetClick(btn) {
+      if (!btn) return;
+      const msg = document.getElementById(`reset-msg`);
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `한 번 더 누르면 초기화`;
+        if (msg) msg.classList.remove(`is-hidden`);
+        return;
+      }
+      disarmResetButton();
+      restartAllQuestions();
+    }
+
+    document.addEventListener(`keydown`, function (e) {
+      if (appState.view !== `quiz`) return;
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : ``;
+      if (tag === `input` || tag === `textarea` || tag === `select`) return;
+
+      const ids = getActiveQuestionIds();
+      const qId = ids[appState.currentPos];
+      if (!qId) return;
+
+      if (e.key === `1` || e.key === `2` || e.key === `3` || e.key === `4`) {
+        selectAnswer(qId, Number(e.key) - 1);
+      } else if (e.key === `h` || e.key === `H`) {
+        toggleHint();
+      } else if (e.key === `ArrowRight`) {
+        goNextOrFinish();
+      } else if (e.key === `ArrowLeft`) {
+        goPrevQuestion();
+      }
+    });
+
+    async function initApp() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved) {
+            restoreFromSaved(saved);
+          }
+        }
+      } catch (err) {
+        // Proceed with fresh state
+      }
+      renderAll();
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+          window.notebookAppApi.notifyAppReady();
+        }
+      } catch (err) {
+        // Ignore outside host iframe
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
