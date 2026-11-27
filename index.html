@@ -102,7 +102,7 @@ const ZONES = [
     { l:"시험", t:"시험안내", files:[["안내 보기","exam-guide.html"]] }
   ]},
   { icon:"🌴", name:"1주차", sub:"엑셀 기초 · CPU 장치", c:"#3fae6a", t:"#e8f8ee", periods:[
-    { t:"엑셀 기초", files:[["학습지",""],["PPT",""]] },
+    { t:"엑셀 기초", files:[["엑셀입력기초","files/week1-1-input.xlsm"]] },
     { t:"CPU 장치", files:[["CPU(중앙처리장치)","files/week1-1-cpu.pdf"],["조직도","files/week1-2-chart.png"]] },
     { t:"기억장치", files:[["기억장치상세","files/week1-2-memory.pdf"],["1일차퀴즈","files/week1-2-quiz.html"]] }
   ]},
@@ -159,8 +159,8 @@ ZONES.forEach((z, zi) => {
       if (url) {
         const a = document.createElement("a");
         a.className = "btn"; a.href = url; a.rel = "noopener";
-        if (/\.xlsx$/i.test(url)) {
-          const fname = label + ".xlsx";
+        if (/\.(xlsx|xlsm)$/i.test(url)) {
+          const fname = label + (/\.xlsm$/i.test(url) ? ".xlsm" : ".xlsx");
           a.setAttribute("download", fname);
           a.addEventListener("click", (e) => {
             e.preventDefault();
